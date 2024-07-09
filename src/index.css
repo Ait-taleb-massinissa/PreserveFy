@@ -27,6 +27,23 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+  margin:0;
+  }
+
+.exportWindow{
+  margin: 20px;
+  padding: 20px;
+  border-radius: 20px;
+  background-color: rgba(0, 0, 0, 0.341);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+.exportWindow h3 {
+  text-align: center;
+  margin:0 ;
 }
 
 .playlist{
@@ -60,3 +77,20 @@
   border-radius: 100%;
 }
 
+.loading{
+  position: absolute;
+  background-color: #121212;
+  border-radius: 20px;
+  top: 50%;
+  width: 50%;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-evenly;
+  
+}
+
+.loading img,video {
+  width: 100px;
+}
