@@ -21,7 +21,7 @@ function App() {
   const redirectUri = 'http://localhost:5173/';
 
   const redirectToSpotify = () => {
-    const scopes = 'playlist-read-private playlist-modify-public playlist-modify-private user-library-read user-library-modify';
+    const scopes = 'playlist-read-private playlist-modify-public playlist-modify-private user-library-read user-library-modify ugc-image-upload';
     const authUrl = `https://accounts.spotify.com/authorize?client_id=${clientId}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${encodeURIComponent(scopes)}`;
     window.location.href = authUrl;
   };
@@ -145,8 +145,8 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-  const getImportedData = (e) => {
-    e.preventDefault();
+  function getImportedData(e) {
+    
     const file = e.dataTransfer.files[0];
 
     if (file) {
@@ -209,6 +209,26 @@ function App() {
         
         const newPlaylist = await fetchCreatePlaylist.json();
 
+        if (playlist.images.length!=3) {
+          const response = await fetch(playlist.images[0].url);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = async () => {
+            const base64data = reader.result.split(',')[1];
+            console.log(base64data)
+            const addImageUrl = 'https://api.spotify.com/v1/playlists/'+newPlaylist.id+'/images'
+            const fetchAddImage = await fetch(addImageUrl, {
+              method: "PUT",
+              headers : {
+                'Authorization': 'Bearer ' + token,
+                'Content-Type': 'image/jpeg'
+              },
+              body : base64data
+            })
+          };
+        }
+
         const addTracksUrl = `https://api.spotify.com/v1/playlists/${newPlaylist.id}/tracks`;
         const fetchAddTracks = await fetch(addTracksUrl, {
           method: "POST",
@@ -222,8 +242,8 @@ function App() {
         });
 
         const result = await fetchAddTracks.json();
+        setProgress((prevProgress) => prevProgress + (100 / checked.length));
       }
-      setProgress((prevProgress) => prevProgress + (100 / checked.length));
     }
   };
 
@@ -244,7 +264,7 @@ function App() {
           setProgress((prevProgress) => prevProgress + ((100/checked.length) /likedTracks.length));
           await sleep(1000);
         }
-      setShowImport(false)
+
     }
   };
 
@@ -280,6 +300,11 @@ function App() {
     e.dataTransfer.dropEffect = 'copy';
   };
 
+  const handleDrop = (e) => {
+    e.preventDefault();
+    getImportedData(e)
+  }
+
  async function importData(){
   setIsLoading(true)
     await importPlaylist();
@@ -288,7 +313,14 @@ function App() {
 
   return (
     <>
-      <h3 className="title" >backup my spotify</h3>
+      <h3 className="title" >PreserveFy</h3>
+      {!showExport && !showImport && (
+        <div className="container exportWindow description" >
+          <p>
+            <strong style={{color:"#1DB954"}} > PreserveFy</strong> is your ultimate tool for backing up Spotify accounts, ensuring your playlists and liked tracks are securely saved and easily recoverable. Share your backup file with friends, allowing them to effortlessly import and enjoy your curated music collections. Never worry about losing your favorite music again with our seamless backup and sharing service.
+          </p>
+        </div>
+      )}
       {!token && (
         <div style={{display:"flex", alignItems:"center", justifyContent:"center"}} >
           <input className="connextionBtn" type="button" value="Connect to Spotify" onClick={redirectToSpotify} />
@@ -304,7 +336,14 @@ function App() {
                   {playlists.map((playlist) => (
                     <div className="playlist" key={playlist.playlist_id} onClick={() => {toggleChecked(playlist.playlist_id)}} >
                       <div className="img">
-                        <img src={playlist.images[1]?.url} alt="playlist image" />
+                        {playlist.images.length==3 && (
+                          <img src={playlist.images[1]?.url} alt="playlist image" />
+                        )}
+
+                        {playlist.images.length!==3 && (
+                          <img src={playlist.images[0]?.url} alt="playlist image" />
+                        )}
+
                       </div>
                       <span className="name">{playlist.name}</span>
                       <span>playlist</span>
@@ -348,7 +387,12 @@ function App() {
                     </div>
                   </div>
                 </div>
-                <input className="connextionBtn" type="button" value="Export" onClick={() => exportData()} />
+                <div className="bottomDiv">
+                  <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowExport(false);setChecked([])}} />
+                  {checked.length>0 && (
+                    <input className="connextionBtn" type="button" value="Export" onClick={() => exportData()} />
+                  )}
+                </div>
                 {isLoading && (
                   <div className="loading">
                       
@@ -365,6 +409,7 @@ function App() {
         Your browser does not support the video tag.
       </video>
                         <span>The Export has finished</span>
+              <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowExport(false);setChecked([])}} />
                       </>
                     )}
                   </div>
@@ -380,11 +425,11 @@ function App() {
                 <div className="container">
                   {showImportInput && (
                     <label>
-                    <div  onDragOver={handleDragOver} onDrop={getImportedData} style={{ border: '2px dashed gray', padding: '20px', textAlign: 'center' }}>
+                    <div  onDragOver={handleDragOver} onDrop={handleDrop} style={{ border: '2px dashed gray', padding: '20px', textAlign: 'center' }}>
                       <p>Drag and drop a file here, or click to select a file</p>
                       <input 
                         type="file" 
-                        onChange={(e) => getImportedData({ dataTransfer: { files: e.target.files } })} 
+                        onChange={(e) =>{ e.preventDefault();getImportedData({ dataTransfer: { files: e.target.files } })}} 
                         style={{ display: 'none' }} 
                       />
                     </div>
@@ -395,7 +440,13 @@ function App() {
                       {importedData.Playlists.map((playlist) => (
                     <div className="playlist" key={playlist.playlist_id} onClick={() => {toggleChecked(playlist.playlist_id)}} >
                       <div className="img">
-                        <img src={playlist.images[1]?.url} alt="playlist image" />
+                      {playlist.images.length==3 && (
+                          <img src={playlist.images[1]?.url} alt="playlist image" />
+                        )}
+
+                        {playlist.images.length!==3 && (
+                          <img src={playlist.images[0]?.url} alt="playlist image" />
+                        )}
                       </div>
                       <span className="name">{playlist.name}</span>
                       <span>playlist</span>
@@ -442,7 +493,12 @@ function App() {
                   )}
 
                 </div>
-                <input className="connextionBtn" type="button" value="Import" onClick={() => importData()} />
+                <div className="bottomDiv">
+                  <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowImport(false);setChecked([])}} />
+                  {checked.length>0 && (
+                    <input className="connextionBtn" type="button" value="Import" onClick={() => importData()} />
+                  )}
+                </div>
                 {isLoading && (
                   <div className="loading">
                     
@@ -460,6 +516,7 @@ function App() {
         Your browser does not support the video tag.
       </video>
                         <span>The Import has finished</span>
+              <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowImport(false);setChecked([])}} />
                       </>
                     )}
                   </div>
@@ -469,7 +526,7 @@ function App() {
           )}
 
           {((!showExport) && (!showImport)) && (
-            <div style={{display:"flex", alignItems:"center", justifyContent:"center"}} >
+            <div style={{display:"flex", alignItems:"center", justifyContent:"center", justifyContent:"space-evenly", margin:"20px 40% 0 40%"}} >
               <input className="connextionBtn" type="button" value="Import" onClick={()=>{setShowImport(true);setShowExport(false)}} />
               <input className="connextionBtn" type="button" value="Export" onClick={() =>{ setShowExport(true);setShowImport(false)}} />
             </div>    
