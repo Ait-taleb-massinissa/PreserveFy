@@ -16,9 +16,9 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
 
-  const clientId = 'f70ff5fd6915496bb05f9f259aa7a81b';
-  const clientSecret = 'ac8504d5896b49a3a093c9c3f06287a7';
-  const redirectUri = 'http://localhost:5173/';
+  const clientId = import.meta.env.VITE_CLIENT_ID;
+  const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
+  const redirectUri = import.meta.env.VITE_URL;
 
   const redirectToSpotify = () => {
     const scopes = 'playlist-read-private playlist-modify-public playlist-modify-private user-library-read user-library-modify ugc-image-upload';
