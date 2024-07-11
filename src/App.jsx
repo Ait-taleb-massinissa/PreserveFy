@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import  loadingSvg  from "./assets/tube-spinner.svg";
 import webmVideo from "./assets/ok.webm"
+import githubSvg from "./assets/github-mark-white.svg"
 
 function App() {
   const [token, setToken] = useState('');
@@ -312,7 +313,7 @@ function App() {
   }
 
   return (
-    <>
+    <div className="page" >
       <h3 className="title" >PreserveFy</h3>
       {!showExport && !showImport && (
         <div className="container exportWindow description" >
@@ -345,8 +346,10 @@ function App() {
                         )}
 
                       </div>
-                      <span className="name">{playlist.name}</span>
-                      <span>playlist</span>
+                      <div className="textes">
+                        <span className="name">{playlist.name}</span>
+                        <span>playlist</span>
+                      </div>
                       <div className="checked">
                         {checked.includes(playlist.playlist_id) && (
                           <svg height="30px" width="30px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -368,8 +371,10 @@ function App() {
                     <div className="img">
                       <img src="https://i.scdn.co/image/ab67706c0000da8470d229cb865e8d81cdce0889" alt="liked image" />
                     </div>
-                    <span className="name">Liked Songs</span>
-                    <span>playlist</span>
+                    <div className="textes">
+                        <span className="name">Liked Songs</span>
+                        <span>playlist</span>
+                      </div>
                     <div className="checked">
                       {checked.includes("Liked Songs") && (
                         <svg height="30px" width="30px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -448,8 +453,10 @@ function App() {
                           <img src={playlist.images[0]?.url} alt="playlist image" />
                         )}
                       </div>
-                      <span className="name">{playlist.name}</span>
-                      <span>playlist</span>
+                      <div className="textes">
+                        <span className="name">{playlist.name}</span>
+                        <span>playlist</span>
+                      </div>
                       <div className="checked">
                         {checked.includes(playlist.playlist_id) && (
                           <svg height="30px" width="30px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -471,8 +478,10 @@ function App() {
                     <div className="img">
                       <img src="https://i.scdn.co/image/ab67706c0000da8470d229cb865e8d81cdce0889" alt="liked image" />
                     </div>
-                    <span className="name">Liked Songs</span>
-                    <span>playlist</span>
+                    <div className="textes">
+                        <span className="name">Liked Songs</span>
+                        <span>playlist</span>
+                      </div>
                     <div className="checked">
                       {checked.includes("Liked Songs") && (
                         <svg height="30px" width="30px" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
@@ -526,14 +535,23 @@ function App() {
           )}
 
           {((!showExport) && (!showImport)) && (
-            <div style={{display:"flex", alignItems:"center", justifyContent:"center", justifyContent:"space-evenly", margin:"20px 40% 0 40%"}} >
+            <div style={{display:"flex", alignItems:"center",gap:"10px"}} >
               <input className="connextionBtn" type="button" value="Import" onClick={()=>{setShowImport(true);setShowExport(false)}} />
               <input className="connextionBtn" type="button" value="Export" onClick={() =>{ setShowExport(true);setShowImport(false)}} />
             </div>    
           )}
           </>
       )}
-    </>
+
+      <footer style={{display:"flex",justifyContent:"center",alignItems:"center",gap:"10%",bottom:"0",position:"absolute",left:"0",right:"0",margin:"0 0 10px 0"}} >
+        <span>Made by AIT TALEB Massinissa</span>
+        <a style={{display:"flex",alignItems:"center",gap:"5px",color:"white",textDecoration:"none"}} href="https://github.com/Ait-taleb-massinissa/PreserveFy">
+          <img src={githubSvg} style={{width:"20px",height:"20px",margin:"0",padding:"0"}} />
+          <span style={{fontSize:"20px"}} >GitHub</span>
+        </a>
+
+      </footer>
+    </div>
   );
 }
 

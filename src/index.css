@@ -2,13 +2,25 @@
   font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 
-:root{
-  background:linear-gradient(to bottom,	#535353,	#121212);
-  height: 100%;
+body{
+  background:linear-gradient(to bottom,	#535353,	#121212) fixed;
   color:white;
   transition: 1s ease;
   scroll-behavior: smooth;
+  min-height: 100%;
+  min-width: 100%;
+  box-sizing:inherit ;
+  position: absolute;
+  margin: 0;
+  padding-bottom:2.64rem;
 }
+
+html{
+  height: 100%;
+  box-sizing: border-box;
+}
+
+
 .title{
   text-align: center;
   font-family:system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -84,6 +96,11 @@
   border-radius: 100%;
 }
 
+.textes{
+  display: flex;
+  flex-direction: column;
+}
+
 .loading{
   position: absolute;
   background-color: #121212;
@@ -104,12 +121,94 @@
 
 .bottomDiv{
   display: flex;
-  justify-content: space-evenly;
-  width: 25%;
+  gap: 10px;
+  width: fit-content;
 }
 
 .description{
-  padding: 50px 90px;
+  padding: 5vh 5vw;
   font-size: 22px;
+  width: 70vw;
+  justify-self: center;
+}
+
+.page{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@media (max-width:709px){
+  .playlist{
+    display: flex;
+    
+    align-items:baseline;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 15px;
+    background-color:	#121212;
+    padding: 15px;
+    cursor: pointer;
+  }
+
+  .playlist img{
+    border-radius: 10px;
+    width:120px;
+  }
   
+  .playlist .checked{
+    position: absolute;
+    margin-bottom: 180px;
+    margin-left: 110px;
+
+  }
+  .playlist .checked svg {
+    background-color: black;
+    padding: 5px;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+  }
+}
+
+@media (max-width:389px){
+  .playlist{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    border-radius: 15px;
+    background-color:	#121212;
+    padding: 15px;
+    cursor: pointer;
+    width: 183px;
+  }
+
+  .textes{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .playlist img{
+    border-radius: 10px;
+    width:50px;
+  } 
+
+  .playlist .checked{
+    position: absolute;
+    margin-bottom: 60px;
+    margin-left: 180px;
+
+  }
+  .playlist .checked svg {
+    background-color: black;
+    padding: 5px;
+    border-radius: 100%;
+    width: 20px;
+    height: 20px;
+  }
+
 }
