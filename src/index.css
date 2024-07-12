@@ -84,6 +84,8 @@ html{
 .playlist img{
   border-radius: 10px;
   width: 280px;
+  height: 280px;
+  object-fit: cover;
 }
 .playlist .name {
   font-weight: 700;

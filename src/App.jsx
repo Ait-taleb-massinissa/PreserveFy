@@ -3,6 +3,7 @@ import  loadingSvg  from "./assets/tube-spinner.svg";
 import webmVideo from "./assets/ok.webm"
 import githubSvg from "./assets/github-mark-white.svg"
 import logo from "./assets/logo.svg"
+import placeholder from "./assets/placeholder.jpg"
 
 function App() {
   const [token, setToken] = useState('');
@@ -17,6 +18,8 @@ function App() {
   const [showImportInput, setShowImportInput] = useState(true);
   const [isLoading, setIsLoading] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [hidePlaceHolder,setHidePlaceHolder] = useState(false);
+
 
   const clientId = import.meta.env.VITE_CLIENT_ID;
   const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
@@ -337,16 +340,20 @@ function App() {
                 <div className="container">
                   {playlists.map((playlist) => (
                     <div className="playlist" key={playlist.playlist_id} onClick={() => {toggleChecked(playlist.playlist_id)}} >
-                      <div className="img">
-                        {playlist.images.length==3 && (
-                          <img src={playlist.images[1]?.url} alt="playlist image" />
-                        )}
+                      {!hidePlaceHolder && (
+                        <img className="img" src={placeholder} />
+                      )}
 
-                        {playlist.images.length!==3 && (
-                          <img src={playlist.images[0]?.url} alt="playlist image" />
-                        )}
+                        <div className="img">
+                          {playlist.images.length==3 && (
+                            <img src={playlist.images[1]?.url} alt="playlist image" onLoad={()=>setHidePlaceHolder(true)} style={{ display: hidePlaceHolder ? 'block' : 'none' }} />
+                          )}
 
-                      </div>
+                          {playlist.images.length!==3 && (
+                            <img src={playlist.images[0]?.url} alt="playlist image" onLoad={()=>setHidePlaceHolder(true)} style={{ display: hidePlaceHolder ? 'block' : 'none' }} />
+                          )}
+                        </div>
+                
                       <div className="textes">
                         <span className="name">{playlist.name}</span>
                         <span>playlist</span>
@@ -445,15 +452,19 @@ function App() {
                     <>
                       {importedData.Playlists.map((playlist) => (
                     <div className="playlist" key={playlist.playlist_id} onClick={() => {toggleChecked(playlist.playlist_id)}} >
-                      <div className="img">
-                      {playlist.images.length==3 && (
-                          <img src={playlist.images[1]?.url} alt="playlist image" />
-                        )}
+                      {!hidePlaceHolder && (
+                        <img className="img" src={placeholder} />
+                      )}
 
-                        {playlist.images.length!==3 && (
-                          <img src={playlist.images[0]?.url} alt="playlist image" />
-                        )}
-                      </div>
+                        <div className="img">
+                          {playlist.images.length==3 && (
+                            <img src={playlist.images[1]?.url} alt="playlist image" onLoad={()=>setHidePlaceHolder(true)} style={{ display: hidePlaceHolder ? 'block' : 'none' }} />
+                          )}
+
+                          {playlist.images.length!==3 && (
+                            <img src={playlist.images[0]?.url} alt="playlist image" onLoad={()=>setHidePlaceHolder(true)} style={{ display: hidePlaceHolder ? 'block' : 'none' }} />
+                          )}
+                        </div>
                       <div className="textes">
                         <span className="name">{playlist.name}</span>
                         <span>playlist</span>
@@ -504,7 +515,7 @@ function App() {
 
                 </div>
                 <div className="bottomDiv">
-                  <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowImport(false);setChecked([])}} />
+                  <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowImport(false);setChecked([]);setHidePlaceHolder(false);setImportedData([]);setShowImportInput(true)}} />
                   {checked.length>0 && (
                     <input className="connextionBtn" type="button" value="Import" onClick={() => importData()} />
                   )}
@@ -526,7 +537,7 @@ function App() {
         Your browser does not support the video tag.
       </video>
                         <span>The Import has finished</span>
-              <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowImport(false);setChecked([])}} />
+              <input className="connextionBtn" type="button" value="Go back" onClick={()=>{setIsLoading(false);setShowImport(false);setChecked([]);setHidePlaceHolder(false)}} />
                       </>
                     )}
                   </div>
