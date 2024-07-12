@@ -27,6 +27,9 @@ html{
   color: #1DB954;
   font-weight: 700;
   font-size: 30px;
+  display: flex;
+  align-items: center;
+  
 }
 
 .connextionBtn{

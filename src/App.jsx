@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import  loadingSvg  from "./assets/tube-spinner.svg";
 import webmVideo from "./assets/ok.webm"
 import githubSvg from "./assets/github-mark-white.svg"
+import logo from "./assets/logo.svg"
 
 function App() {
   const [token, setToken] = useState('');
@@ -314,7 +315,7 @@ function App() {
 
   return (
     <div className="page" >
-      <h3 className="title" >PreserveFy</h3>
+      <h3 className="title" > <img style={{width:"50px"}} src={logo}/>reserveFy</h3>
       {!showExport && !showImport && (
         <div className="container exportWindow description" >
           <p>
