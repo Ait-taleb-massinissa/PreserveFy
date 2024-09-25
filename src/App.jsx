@@ -4,6 +4,7 @@ import webmVideo from "./assets/ok.webm"
 import githubSvg from "./assets/github-mark-white.svg"
 import logo from "./assets/logo.svg"
 import placeholder from "./assets/placeholder.jpg"
+import CryptoJS from "crypto-js"
 
 function App() {
   const [token, setToken] = useState('');
@@ -20,7 +21,7 @@ function App() {
   const [progress, setProgress] = useState(0);
   const [hidePlaceHolder,setHidePlaceHolder] = useState(false);
 
-
+  const encryptionKey = import.meta.env.VITE_HASH;
   const clientId = import.meta.env.VITE_CLIENT_ID;
   const clientSecret = import.meta.env.VITE_CLIENT_SECRET;
   const redirectUri = import.meta.env.VITE_URL;
@@ -137,10 +138,16 @@ function App() {
   };
 
   const downloadJSON = (data, filename = 'data.json') => {
+    // Convert the data to a JSON string
     const jsonStr = JSON.stringify(data, null, 2);
-    const blob = new Blob([jsonStr], { type: 'application/json' });
+    
+    // Encrypt the JSON string
+    const encrypted = CryptoJS.AES.encrypt(jsonStr, encryptionKey).toString();
+  
+    // Create a Blob and download the file
+    const blob = new Blob([encrypted], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
-
+  
     const a = document.createElement('a');
     a.href = url;
     a.download = filename;
@@ -150,31 +157,37 @@ function App() {
     URL.revokeObjectURL(url);
   };
 
-  function getImportedData(e) {
-    
+  const getImportedData = (e) => {
     const file = e.dataTransfer.files[0];
-
+  
     if (file) {
       const reader = new FileReader();
-
+  
       reader.onload = async (e) => {
         try {
-          const jsonStr = e.target.result;
-          const jsonData = JSON.parse(jsonStr);
+          const encryptedData = e.target.result;
+  
+          // Decrypt the JSON string
+          const bytes = CryptoJS.AES.decrypt(encryptedData, encryptionKey);
+          const decrypted = bytes.toString(CryptoJS.enc.Utf8);
+  
+          // Parse the decrypted JSON string
+          const jsonData = JSON.parse(decrypted);
           setImportedData(jsonData);
         } catch (error) {
-          console.error('Error parsing JSON:', error);
+          console.error('Error decrypting JSON:', error);
         }
       };
-
+  
       reader.onerror = () => {
         console.error('Error reading file:', reader.error);
       };
-
+  
       reader.readAsText(file);
-      setShowImportInput(false)
+      setShowImportInput(false);
     }
   };
+  
 
   async function getLiked () {
     const likedUrl = "https://api.spotify.com/v1/me/tracks?limit=50";
